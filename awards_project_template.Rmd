@@ -81,7 +81,7 @@ Out of League: 16 players.
 
 ## Part 2  
 
-**Question 1:** XX.X%   
+**Question 1:** 028.78861%   
 **Question 2:** Written question, put answer below in the document.    
 **Question 3:** Written question, put answer below in the document.    
   
@@ -493,12 +493,15 @@ Using the `rebounding_data` dataset, we'll predict a team's next game's offensiv
 Please calculate what OKC's predicted offensive rebound percent is for game 81 in the data. That is, use games 1-80 to predict game 81.  
 
 ```{r}
-
+OKC_rebounds<-rebounding_data[rebounding_data$team=="OKC", ]
+training <- OKC_rebounds %>%
+  slice(1:80)
+mean(training$oreb_pct)
 ```
 
 <span style="color:red">**ANSWER 1:**</span>    
 
-XX.X% 
+028.78861% 
 
 ### Question 2  
 
@@ -508,7 +511,7 @@ Please discuss how you would think about changing our original model to better a
 
 <span style="color:red">**ANSWER 2:**</span>  
 
-
+Let's assume we have rebound contributions for each player. Now let's assume we have minutes played for each player as well as the number of minutes in the game. From this we can calculate rebounds per minute for each player. Then we can calculate using total minutes played by each player in game 81 the predicted rebound percentage. 
 ### Question 3  
 
 In question 2, you saw and discussed how to deal with one weakness of the model. For this question, please write about 1-3 other potential weaknesses of the simple average model you made in question 1 and discuss how you would deal with each of them. You may either explain a weakness and discuss how you'd fix that weakness, then move onto the next issue, or you can start by explaining multiple weaknesses with the original approach and discuss one overall modeling methodology you'd use that gets around most or all of them. Again, you do not need to write any code or implement any changes, and you can assume you have access to any reasonable data that isn't provided in this project. Try to be clear and concise with your answer.  
@@ -516,5 +519,13 @@ In question 2, you saw and discussed how to deal with one weakness of the model.
 <span style="color:red">**ANSWER 3:**</span>    
 
 
+As a model which uses averages it is not robust to outliers. We should consider using the mad instead of mean. Additionally we could have recent trades with a player who is good at rebounding. We can use a similar method to that described in question 2 to resolve this with rebounds per player per minute as well as minutes played. Finally suppose the team has been improving throughout the season. Then we should use the following method. 
+```{r}
+model <- lm(oreb_pct ~ game_number, data=training)
+plot(model)
+game <- data.frame(game_number = 81)
+predict(model, game)
 
-
+```
+Note with the plots the cook distance of some of the games and the outliers expressed. Mean is not robust to outliers. One problem with this method is it doesn't handle high numbers of games in a season. The model falls apart when many many games are played in a season. It takes a great deal of games for this to become an issue so it shouldn't be too much of an issue. 
+```
