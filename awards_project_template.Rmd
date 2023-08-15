@@ -250,7 +250,7 @@ player_data_awards <- player_data_awards %>%
 # Calculate career outcomes for each player
 player_ids <- unique(player_data_awards$nbapersonid)
 career_outcomes <- data.frame(player_id = player_ids, career_outcome = NA)
-
+#Loop through each palayer id and examine appropriate seasons. 
 for (i in player_ids) {
   player_data_for_id <- player_data_awards[player_data_awards$nbapersonid == i, ]
   max_season <- max(player_data_for_id$season.y)
@@ -479,8 +479,15 @@ id<-player_data[player_data$player=="James Wiseman", "nbapersonid"]
 awards[awards$nbapersonid==id$nbapersonid[1], "Rookie Of The Year_rk"]
 id<-player_data[player_data$player=="Josh Giddey", "nbapersonid"]
 awards[awards$nbapersonid==id$nbapersonid[1], "Rookie Of The Year_rk"]
+plot(model)
 ```
-This model uses the rookie of the year rank to predict the future outcomes of a career. As you can see p values are relatively low with a low adjusted r squared to the model fits the data relatively well for just a single factor being evaluated for the x-axis. By taking a player's rookie of the year score we can predict whether they will end up in the 'Elite' 'Out of the League' 'Roster' 'Rotation' or 'Starter' bucket. This is an inverse function as the rank goes up we see that they are more likely to be out of the league or in the roster buckets. However for lower ranks we can see starter and elite buckets. A weakness of this model is player maturity. We often see players grow into their roles as time goes on. This only takes into account their first year. If I had more time and data I would examine subsequent years and seasonal outcomes for those years. Shai Gilgeous-Alexander is predicted to be Rotation. Zion Williamson is predicted to be a Elite. James Williamson is predicted to be out of the league. Josh Giddy is predicted to be out of the league.
+This model uses the rookie of the year rank to predict the future outcomes of a career. As you can see p values are relatively low with a low adjusted r squared to the model fits the data relatively well for just a single factor being evaluated for the x-axis. By taking a player's rookie of the year score we can predict whether they will end up in the 'Elite' 'Out of the League' 'Roster' 'Rotation' or 'Starter' bucket. This is an inverse function as the rank goes up we see that they are more likely to be out of the league or in the roster buckets. However for lower ranks we can see starter and elite buckets. 
+
+A weakness of this model is player maturity. We often see players grow into their roles as time goes on. This only takes into account their first year. If I had more time and data I would examine subsequent years and seasonal outcomes for those years. 
+
+Shai Gilgeous-Alexander is predicted to be Rotation. Zion Williamson is predicted to be a Elite. James Williamson is predicted to be out of the league. Josh Giddy is predicted to be out of the league.
+
+A gg plot for this model is inappropriate as it's a step function with different coefficients. 
 
 ## Part 2 -- Predicting Team Stats  
 
@@ -519,7 +526,11 @@ In question 2, you saw and discussed how to deal with one weakness of the model.
 <span style="color:red">**ANSWER 3:**</span>    
 
 
-As a model which uses averages it is not robust to outliers. We should consider using the mad instead of mean. Additionally we could have recent trades with a player who is good at rebounding. We can use a similar method to that described in question 2 to resolve this with rebounds per player per minute as well as minutes played. Finally suppose the team has been improving throughout the season. Then we should use the following method. 
+As a model which uses averages it is not robust to outliers. 
+
+We should consider using the mad instead of mean. Additionally we could have recent trades with a player who is good at rebounding. We can use a similar method to that described in question 2 to resolve this with rebounds per player per minute as well as minutes played. 
+
+Finally suppose the team has been improving throughout the season. Then we should use the following method. 
 ```{r}
 model <- lm(oreb_pct ~ game_number, data=training)
 plot(model)
